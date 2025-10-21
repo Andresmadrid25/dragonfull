@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Tablas de multiplicar</title>
+	<style>
+		body { font-family: Arial, sans-serif; margin: 20px; background:#f7f9fc; color:#111; }
+		h1 { margin-bottom: 8px; }
+		.controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+		label { font-size:14px; }
+		select, input[type="number"], button { padding:6px 8px; font-size:14px; }
+		button { cursor:pointer; background:#0078d4; color:white; border:none; border-radius:4px; }
+		#output { display:flex; flex-wrap:wrap; gap:14px; }
+		.table-card { background:white; border:1px solid #e0e6ef; border-radius:6px; padding:10px; width:200px; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+		.table-card h3 { margin:0 0 8px 0; font-size:16px; }
+		table { width:100%; border-collapse:collapse; font-size:14px; }
+		td { padding:3px 4px; border-bottom:1px dashed #eee; }
+		@media (max-width:560px){ .table-card{ width:100%; } }
+	</style>
+</head>
+<body>
+	<h1>Tablas de multiplicar</h1>
+	<div class="controls">
+		<label>
+			Número:
+			<select id="numberSelect">
+				<option value="all">Todas</option>
+			</select>
+		</label>
+
+		<label>
+			Hasta:
+			<input id="maxInput" type="number" min="1" max="100" value="10" />
+		</label>
+
+		<button id="generateBtn">Generar</button>
+		<button id="clearBtn" style="background:#6c757d">Limpiar</button>
+	</div>
+
+	<div id="output" aria-live="polite"></div>
+
+	<script>
+		// Rellenar selector con números 1..20
+		(function fillSelect(){
+			const sel = document.getElementById('numberSelect');
+			for(let i=1;i<=20;i++){
+				const opt = document.createElement('option');
+				opt.value = String(i);
+				opt.textContent = i;
+				sel.appendChild(opt);
+			}
+		})();
+
+		function createTableCard(n, max){
+			const card = document.createElement('div');
+			card.className = 'table-card';
+			const title = document.createElement('h3');
+			title.textContent = `Tabla del ${n}`;
+			card.appendChild(title);
+
+			const tbl = document.createElement('table');
+			for(let i=1;i<=max;i++){
+				const tr = document.createElement('tr');
+				const td1 = document.createElement('td');
+				td1.textContent = `${n} × ${i}`;
+				const td2 = document.createElement('td');
+				td2.textContent = `= ${n*i}`;
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tbl.appendChild(tr);
+			}
+			card.appendChild(tbl);
+			return card;
+		}
+
+		document.getElementById('generateBtn').addEventListener('click', () => {
+			const sel = document.getElementById('numberSelect').value;
+			let max = parseInt(document.getElementById('maxInput').value, 10) || 10;
+			if (max < 1) max = 1;
+			if (max > 100) max = 100; // límite razonable
+			const out = document.getElementById('output');
+			out.innerHTML = '';
+
+			if (sel === 'all') {
+				for(let n=1;n<=20;n++){
+					out.appendChild(createTableCard(n, max));
+				}
+			} else {
+				const n = parseInt(sel,10);
+				out.appendChild(createTableCard(n, max));
+			}
+		});
+
+		document.getElementById('clearBtn').addEventListener('click', () => {
+			document.getElementById('output').innerHTML = '';
+		});
+
+		// Generar tablas por defecto al cargar
+		window.addEventListener('DOMContentLoaded', () => {
+			document.getElementById('generateBtn').click();
+		});
+	</script>
+</body>
+</html>
